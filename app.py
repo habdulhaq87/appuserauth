@@ -44,10 +44,14 @@ if st.button("Calculate"):
         st.success(f"The result of {operation} is: {result}")
         save_result(f"{num1} {operation} {num2}", result)
 
-# Show saved results
-if st.checkbox("Show saved results"):
-    if os.path.exists(RESULTS_FILE):
-        df = pd.read_csv(RESULTS_FILE)
-        st.dataframe(df)
+# Function to save results
+def save_result(operation, result):
+    if not os.path.exists(RESULTS_FILE):
+        df = pd.DataFrame(columns=["Operation", "Result"])
     else:
-        st.info("No results saved yet.")
+        df = pd.read_csv(RESULTS_FILE)
+
+    new_entry = pd.DataFrame({"Operation": [operation], "Result": [result]})
+    df = pd.concat([df, new_entry], ignore_index=True)
+    df.to_csv(RESULTS_FILE, index=False)
+
